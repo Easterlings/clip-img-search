@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>clip img search</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <style>
+    .image-row {
+      /* display: flex; */
+      justify-content: center;
+      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-gap: 10px;
+    }
+
+    .image-item {
+      max-width: 300px;
+      height: auto;
+      margin: 0 10px;
+    }
+  </style>
+  <script>
+    function uploadFolderPath() {
+      const input = document.getElementById('folderInput');
+      if (input.files.length > 0) {
+        const folderPath = input.files[0].webkitRelativePath.split('/')[0];
+        const formData = new FormData();
+        formData.append('folderPath', folderPath);
+
+        fetch('/import_img', {
+          method: 'POST',
+          body: folderPath
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            alert(data.message);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      } else {
+        alert('Please select a folder.');
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <main class="container">
+    <h1>clip img import</h1>
+    <button onclick="window.location.href = '/'">图片搜索</button>
+    <!-- <h1>Select Folder</h1> -->
+    <input type="file" id="folderInput" webkitdirectory directory multiple>
+    <button onclick="uploadFolderPath()">Upload Folder Path</button>
+
+  </main>
+</body>
+
+</html>

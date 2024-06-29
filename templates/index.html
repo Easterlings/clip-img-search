@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>clip img search</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <style>
+    .image-row {
+      /* display: flex; */
+      justify-content: center;
+      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-gap: 10px;
+    }
+
+    .image-item {
+      max-width: 300px; 
+      height: auto; 
+      margin: 0 10px; 
+    }
+  </style>
+  <script>
+    function previewImage() {
+      var preview = document.getElementById("preview-image");
+      var file = document.getElementById("image-input").files[0];
+      var reader = new FileReader();
+
+      reader.onloadend = function () {
+          preview.src = reader.result;
+          preview.style.display = "inline-block";
+      }
+
+      if (file) {
+          reader.readAsDataURL(file);
+      } else {
+          preview.src = "";
+          preview.style.display = "none";
+      }
+  }
+  </script>
+</head>
+
+<body>
+  <main class="container">
+    <h1>clip img search</h1>
+    <button onclick="window.location.href = '/import'">导入图片到向量数据库</button>
+    <form method=post enctype=multipart/form-data action="/upload">
+      <input id="image-input" type=file name=image required="required" onchange="previewImage()"><br>
+      <img id="preview-image" src="#" alt="Preview Image" style="max-width: 300px; display: none;">
+      
+      <label for="num">请选择搜索数量：</label>
+      <select  type="number" name="num" id="num" required>
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+
+      <input type=submit value=查找类似图片>
+    </form>
+
+    <ul>
+      <table>
+        <tbody>
+          {% if img_base64s %}
+          <div class="image-row">
+            {% for img_base64 in img_base64s %}
+              <img src="data:image/jpeg;base64,{{ img_base64 }}" alt="Base64 Image" class="image-item">
+            {% endfor %}
+          </div>
+          {% endif %}
+        </tbody>
+      </table>
+    </ul>
+  </main>
+</body>
+
+
+</html>
