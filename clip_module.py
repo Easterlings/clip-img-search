@@ -19,7 +19,6 @@ index = pc.Index(PINECONE_INDEX_NAME)
 model_dir = Path(CLIP_DIR)
 model = CLIPModel.from_pretrained(model_dir)
 processor = CLIPProcessor.from_pretrained(model_dir)
-tokenizer = CLIPTokenizer.from_pretrained(model_dir)
 
 def save_to_vector_database(input_dir):
     # 从一个文件夹递归遍历图像并提取嵌入到数据库
