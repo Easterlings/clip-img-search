@@ -47,10 +47,11 @@
   <main class="container">
     <h1>clip img search</h1>
     <button onclick="window.location.href = '/import'">导入图片到向量数据库</button>
-    <a href="/search_text">search_by_text</a><br>
-    <form method=post enctype=multipart/form-data action="/search_by_img">
-      <label for="fname">上传图像进行搜索:</label>
-      <input id="image-input" type=file name=image required="required" onchange="previewImage()"><br>
+    <a href="/">search_by_img</a><br>
+    <form method=post enctype=multipart/form-data action="/search_by_text">
+      <label for="fname">上传文字进行搜索:</label>
+      <input id="image-input" type=text name=texts required="required"><br>
+      <!-- <input type=text name=texts required="required" placeholder="1"><br> -->
       <img id="preview-image" src="#" alt="Preview Image" style="max-width: 300px; display: none;">
       
       <label for="num">请选择搜索数量：</label>
@@ -63,7 +64,6 @@
 
       <input type=submit value=查找类似图片>
     </form>
-
 
     <ul>
       <table>

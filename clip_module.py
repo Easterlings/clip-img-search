@@ -1,15 +1,12 @@
 
 # 用CLIP提取图像嵌入并将嵌入存储到矢量数据库Pinecone中
-import io
 import os
 # import pinecone
-from transformers import CLIPModel, CLIPProcessor, CLIPTokenizer
+from transformers import CLIPModel, CLIPProcessor
 from pathlib import Path
 # 初始化 Pinecone 客户端
 from pinecone import Pinecone
 from PIL import Image
-import base64
-import time
 from config import PINECONE_API_KEY,PINECONE_INDEX_NAME,CLIP_DIR,IMG_DIR
 from utils import strtob64,b64tostr
 pc = Pinecone(api_key=PINECONE_API_KEY)
@@ -32,22 +29,27 @@ def save_to_vector_database(input_dir):
                 # 加载图像
                 image_path = os.path.join(input_dir, filename)
                 img = Image.open(image_path)
-                embedding = get_embedding(img)
+                embedding = get_embedding_by_img(img)
                 base64_file_name = strtob64(filename)
                 # 将嵌入存储到 Pinecone 索引
                 index.upsert([(base64_file_name, embedding)])
                 print(filename)
 
-def get_embedding(img):
+def get_embedding_by_img(img):
     image = processor(images=img, return_tensors="pt").pixel_values
     output = model.get_image_features(image)
-    embedding = output.detach().numpy().flatten()
-    return embedding
+    embedding = output.tolist()
+    return embedding[0]
 
-def search_img(img:Image,folder_paths,num = 5):
+def get_embedding_by_text(text):
+    inputs = processor(text=text, return_tensors="pt", padding=True)
+    text_features = model.get_text_features(**inputs)
+    embedding = text_features.tolist()
+    return embedding[0]
+
+def search_img(embedding,folder_paths,num = 5):
     #从目录及其子目录中搜索当前图片最相似的num张图片，
-    query_embedding = get_embedding(img)
-    results = index.query(vector=query_embedding.tolist(), top_k=num)
+    results = index.query(vector=embedding, top_k=num)
 
     print("Top 5 similar images:")
     for result in results["matches"]:

@@ -37,3 +37,10 @@ python app.py
 
 Open your web browser and navigate to http://localhost:5000 to search the image!
 
+## Todo
+
+- [ ] search by text
+
+- [ ] config fix
+
+- [ ] application add vector upload functionalities
