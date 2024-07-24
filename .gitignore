@@ -2,3 +2,4 @@
 .vscode
 config.py
 test.py
+.env
