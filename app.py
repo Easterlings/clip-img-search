@@ -1,6 +1,6 @@
 #clip img search project
 from flask import Flask,request, redirect, url_for, render_template, jsonify, session
-from clip_module import search_img, get_embedding_by_img, get_embedding_by_text
+from clip_module import search_img, get_embedding_by_img, get_embedding_by_text, save_to_vector_database
 from PIL import Image
 from io import BytesIO
 from utils import PIL_to_b64
@@ -61,10 +61,13 @@ def import_page():
 def import_img():
     folder_path = request.form.get('folderPath')
     print(folder_path)
-    if folder_path:
-        return jsonify({'message': 'Folder path received', 'folderPath': folder_path})
-    else:
-        return jsonify({'message': 'No folder path received'}), 400
+    save_to_vector_database(folder_path)
+    return redirect(url_for('import'))
+
+    # if folder_path:
+    #     return jsonify({'message': 'Folder path received', 'folderPath': folder_path})
+    # else:
+    #     return jsonify({'message': 'No folder path received'}), 400
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=5000,debug=True)
