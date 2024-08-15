@@ -11,7 +11,7 @@ app.secret_key = 'clip'
 
 @app.route("/")
 def home():
-    img_paths = session.get('img_paths')
+    img_paths = session.get('img_paths', [])
     if img_paths:
         img_paths = img_paths.split(',')
 
@@ -21,7 +21,7 @@ def home():
 
 @app.route("/search_text")
 def search_text():
-    img_paths = session.get('img_paths')
+    img_paths = session.get('img_paths', [])
     if img_paths:
         img_paths = img_paths.split(',')
 
@@ -53,21 +53,16 @@ def search_by_text():
     session['img_paths'] = ','.join(img_paths)
     return redirect(url_for('search_text'))
 
-@app.route('/import')
+@app.route('/import_page')
 def import_page():
-    return render_template('import.html')
+    return render_template('import_page.html')
 
 @app.route('/import_img', methods=['POST'])
 def import_img():
     folder_path = request.form.get('folderPath')
     print(folder_path)
     save_to_vector_database(folder_path)
-    return redirect(url_for('import'))
-
-    # if folder_path:
-    #     return jsonify({'message': 'Folder path received', 'folderPath': folder_path})
-    # else:
-    #     return jsonify({'message': 'No folder path received'}), 400
+    return redirect(url_for('import_page'))
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=5000,debug=True)

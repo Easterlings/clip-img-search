@@ -1,19 +1,19 @@
 
 # 用CLIP提取图像嵌入并将嵌入存储到矢量数据库Pinecone中
 import os
-# import pinecone
 from transformers import CLIPModel, CLIPProcessor
 from pathlib import Path
-# 初始化 Pinecone 客户端
 from pinecone import Pinecone
 from PIL import Image
 from config import PINECONE_API_KEY,PINECONE_INDEX_NAME,CLIP_DIR,IMG_DIR
 from utils import strtob64,b64tostr
+# 初始化 Pinecone 客户端
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index(PINECONE_INDEX_NAME)
 
 # 加载 CLIP 模型和处理器
-model_dir = Path(CLIP_DIR)
+model_dir = "openai/clip-vit-base-patch32"
+# model_dir = Path(CLIP_DIR)
 model = CLIPModel.from_pretrained(model_dir)
 processor = CLIPProcessor.from_pretrained(model_dir)
 
@@ -25,7 +25,7 @@ def save_to_vector_database(input_dir):
         if os.path.isdir(item_path):
             save_to_vector_database(item_path)
         else:
-            if filename.endswith("720.jpg") or filename.endswith(".png"):
+            if filename.endswith(".jpg") or filename.endswith(".png"):
                 # 加载图像
                 image_path = os.path.join(input_dir, filename)
                 img = Image.open(image_path)
@@ -33,7 +33,7 @@ def save_to_vector_database(input_dir):
                 base64_file_name = strtob64(filename)
                 # 将嵌入存储到 Pinecone 索引
                 index.upsert([(base64_file_name, embedding)])
-                print(filename)
+                print(f'{filename} saved to database')
 
 def get_embedding_by_img(img):
     image = processor(images=img, return_tensors="pt").pixel_values
@@ -58,6 +58,7 @@ def search_img(embedding,folder_paths,num = 5):
     image_names = [b64tostr(base64_img_name) for base64_img_name in base64_img_names]
     
     img_paths = []
+    folder_paths = folder_paths.split(",")
     for folder_path in folder_paths:
         for image_name in image_names:
             img_path = search_imgname_in_folder(folder_path, image_name)
