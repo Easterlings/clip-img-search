@@ -58,7 +58,6 @@ def search_img(embedding,folder_paths,num = 5):
     image_names = [b64tostr(base64_img_name) for base64_img_name in base64_img_names]
     
     img_paths = []
-    folder_paths = folder_paths.split(",")
     for folder_path in folder_paths:
         for image_name in image_names:
             img_path = search_imgname_in_folder(folder_path, image_name)
