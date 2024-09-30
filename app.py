@@ -79,7 +79,7 @@ def addtoenv(folder_path):
     for i, line in enumerate(script_content):
         if line.startswith('IMG_DIR='):
             str = ","
-            script_content[i] = f'IMG_DIR={str.join(IMG_DIR)}'
+            script_content[i] = f'IMG_DIR={str.join(IMG_DIR)}\n'
             break
         # 将修改后的内容写回文件
     with open(".env", 'w', encoding="utf-8") as file:
